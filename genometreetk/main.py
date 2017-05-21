@@ -94,7 +94,7 @@ class OptionsParser():
                                        None,
                                        options.derep_genome_file)
         except GenomeTreeTkError as e:
-            print e.message
+            print(e.message)
             raise SystemExit
 
         self.logger.info('Dereplicated genome list written to: %s' % options.derep_genome_file)
@@ -324,7 +324,7 @@ class OptionsParser():
 
         self.logger.info('Identifying genomes from the specified outgroup.')
         outgroup = set()
-        for genome_id, taxa in Taxonomy().read(options.taxonomy_file).iteritems():
+        for genome_id, taxa in Taxonomy().read(options.taxonomy_file).items():
             if options.outgroup_taxon in taxa:
                 outgroup.add(genome_id)
         self.logger.info('Identifying %d genomes in the outgroup.' % len(outgroup))
@@ -356,7 +356,7 @@ class OptionsParser():
                             options.strict_filtering,
                             options.species_derep_file)
         except GenomeTreeTkError as e:
-            print e.message
+            print(e.message)
             raise SystemExit
 
         self.logger.info('RefSeq representative genomes written to: %s' % options.species_derep_file)
@@ -389,7 +389,7 @@ class OptionsParser():
             self.logger.info('Representative genomes written to: %s' % options.rep_genome_file)
 
         except GenomeTreeTkError as e:
-            print e.message
+            print(e.message)
             raise SystemExit
 
     def cluster(self, options):
@@ -409,7 +409,7 @@ class OptionsParser():
             self.logger.info('Clustering information written to: %s' % options.cluster_file)
 
         except GenomeTreeTkError as e:
-            print e.message
+            print(e.message)
             raise SystemExit
             
     def validate(self, options):
@@ -470,7 +470,7 @@ class OptionsParser():
             # find taxa with an MRCA spanning additional taxa
             for rank_label in Taxonomy.rank_labels[1:]:
                 extant_taxa = taxonomy.extant_taxa_for_rank(rank_label, reduced_taxonomy)
-                for taxon, taxa_ids in extant_taxa.iteritems():
+                for taxon, taxa_ids in extant_taxa.items():
                     mrca = tree.mrca(taxa=[taxon_map[t] for t in taxa_ids])
                     mrca_leaf_count = sum([1 for leaf in mrca.leaf_iter()])
                     if mrca_leaf_count != len(taxa_ids):
@@ -489,10 +489,10 @@ class OptionsParser():
                         taxa.add(taxon)
 
         if len(polyphyletic_groups):
-            print ''
-            print 'Tree contains polyphyletic groups:'
+            print('')
+            print('Tree contains polyphyletic groups:')
             for taxon in polyphyletic_groups:
-                print '%s' % (taxon)
+                print('%s' % (taxon))
                           
         self.logger.info('Finished performing validation tests.')
 
@@ -505,7 +505,7 @@ class OptionsParser():
         taxonomy = Taxonomy()
         t = taxonomy.read(options.input_taxonomy)
 
-        for genome_id, taxon_list in t.iteritems():
+        for genome_id, taxon_list in t.items():
             full_taxon_list = taxonomy.fill_missing_ranks(taxon_list)
 
             taxonomy_str = ';'.join(full_taxon_list)
@@ -527,7 +527,7 @@ class OptionsParser():
         taxonomy = Taxonomy()
         t = taxonomy.read(options.input_taxonomy)
 
-        for genome_id, taxon_list in t.iteritems():
+        for genome_id, taxon_list in t.items():
             taxonomy_str = ';'.join(taxon_list)
             if not taxonomy.check_full(taxonomy_str):
                 sys.exit(-1)
@@ -559,7 +559,7 @@ class OptionsParser():
         explict_tax = taxonomy.read(options.input_taxonomy)
         expanded_taxonomy = {}
         incongruent_count = 0
-        for genome_id, taxon_list in explict_tax.iteritems():
+        for genome_id, taxon_list in explict_tax.items():
             taxonomy_str = ';'.join(taxon_list)
 
             # Propagate taxonomy strings if genome is a representatives. Also, determine
@@ -585,12 +585,12 @@ class OptionsParser():
                 # determine if representative and clustered genome taxonomy strings are congruent
                 working_cluster_taxonomy = list(taxon_list)
                 incongruent_with_rep = False
-                for cluster_genome_id, cluster_tax in clustered_genome_tax.iteritems():
+                for cluster_genome_id, cluster_tax in clustered_genome_tax.items():
                     if incongruent_with_rep:
                         working_cluster_taxonomy = list(taxon_list)  # default to rep taxonomy
                         break
 
-                    for r in xrange(0, len(Taxonomy.rank_prefixes)):
+                    for r in range(0, len(Taxonomy.rank_prefixes)):
                         if cluster_tax[r] == Taxonomy.rank_prefixes[r]:
                             break  # no more taxonomy information to consider
 
@@ -635,7 +635,7 @@ class OptionsParser():
         self.logger.info('Identified %d clusters with incongruent taxonomies.' % incongruent_count)
 
         fout = open(options.output_taxonomy, 'w')
-        for genome_id, taxonomy_str in expanded_taxonomy.iteritems():
+        for genome_id, taxonomy_str in expanded_taxonomy.items():
             fout.write('%s\t%s\n' % (genome_id, taxonomy_str))
         fout.close()
 
@@ -684,15 +684,15 @@ class OptionsParser():
         taxonomy1 = Taxonomy().read(options.input_taxonomy1)
         taxonomy2 = Taxonomy().read(options.input_taxonomy2)
 
-        all_taxon_ids = set(taxonomy1.keys()).union(taxonomy2.keys())
+        all_taxon_ids = set(taxonomy1.keys()).union(list(taxonomy2.keys()))
 
         rank_index = Taxonomy.rank_labels.index(options.rank)
         for taxon_id in all_taxon_ids:
             if options.report_missing_taxa:
                 if taxon_id not in taxonomy1:
-                    print 'Missing in taxonomy 1: %s' % taxon_id
+                    print('Missing in taxonomy 1: %s' % taxon_id)
                 elif taxon_id not in taxonomy2:
-                    print 'Missing in taxonomy 2: %s' % taxon_id
+                    print('Missing in taxonomy 2: %s' % taxon_id)
 
             if taxon_id in taxonomy1 and taxon_id in taxonomy2:
                 taxon1 = taxonomy1[taxon_id][rank_index]
@@ -700,9 +700,9 @@ class OptionsParser():
 
                 if taxon1 != taxon2:
                     if options.report_missing_ranks or (taxon1[3:] and taxon2[3:]):
-                        print 'Different taxon for %s: %s %s' % (taxon_id, taxon1, taxon2)
+                        print('Different taxon for %s: %s %s' % (taxon_id, taxon1, taxon2))
 
-        print 'Done.'
+        print('Done.')
         
     def phylogenetic_diversity(self, options):
         """Calculate phylogenetic diversity of extant taxa."""
@@ -719,28 +719,28 @@ class OptionsParser():
         in_pg = total_pd - out_pd
                                             
         # report phylogenetic diversity (PD) and gain (PG)
-        print ''
-        print '\tNo. Taxa\tNo. Dereplicated Taxa\tPD\tPercent PD'
+        print('')
+        print('\tNo. Taxa\tNo. Dereplicated Taxa\tPD\tPercent PD')
         
-        print '%s\t%d\t%d\t%.2f\t%.2f%%' % ('Full tree', total_taxa, total_taxa_derep, total_pd, 100)
+        print('%s\t%d\t%d\t%.2f\t%.2f%%' % ('Full tree', total_taxa, total_taxa_derep, total_pd, 100))
         
-        print '%s\t%d\t%d\t%.2f\t%.3f%%' % ('Outgroup taxa (PD)',
+        print('%s\t%d\t%d\t%.2f\t%.3f%%' % ('Outgroup taxa (PD)',
                                             out_taxa,
                                             out_taxa_derep,
                                             out_pd, 
-                                            out_pd * 100 / total_pd)
+                                            out_pd * 100 / total_pd))
 
-        print '%s\t%d\t%d\t%.2f\t%.3f%%' % ('Ingroup taxa (PD)',
+        print('%s\t%d\t%d\t%.2f\t%.3f%%' % ('Ingroup taxa (PD)',
                                             in_taxa,
                                             in_taxa_derep,
                                             in_pd, 
-                                            (in_pd) * 100 / total_pd)   
+                                            (in_pd) * 100 / total_pd))   
                                         
-        print '%s\t%d\t%d\t%.2f\t%.3f%%' % ('Ingroup taxa (PG)',
+        print('%s\t%d\t%d\t%.2f\t%.3f%%' % ('Ingroup taxa (PG)',
                                             in_taxa,
                                             in_taxa_derep,
                                             in_pg, 
-                                            in_pg * 100 / total_pd)
+                                            in_pg * 100 / total_pd))
               
     def ani(self, options):
         """Calculate the ANI value of named species."""

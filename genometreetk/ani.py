@@ -66,7 +66,7 @@ class ANI(object):
                                                         'checkm_contamination'])
             
         genome_quality = {}
-        for genome_id, m in metadata.iteritems():
+        for genome_id, m in metadata.items():
             genome_quality[genome_id] = m.checkm_completeness - 5*m.checkm_contamination
                 
         while True:
@@ -77,7 +77,7 @@ class ANI(object):
             # select highest quality genomes
             if len(genome_ids) > max_genomes:
                 t = [(genome_id, q) 
-                        for genome_id, q in genome_quality.iteritems() 
+                        for genome_id, q in genome_quality.items() 
                         if genome_id in genome_ids]
                 hq_genomes = sorted(t, key=lambda x: x[1], reverse=True)[0:max_genomes]
                 genome_ids = [x[0] for x in hq_genomes]
@@ -208,7 +208,7 @@ class ANI(object):
         writer_queue = mp.Queue()
 
         num_species = 0
-        for species, genome_ids in named_species.iteritems():
+        for species, genome_ids in named_species.items():
             if len(genome_ids) > 1:
                 worker_queue.put((species, genome_ids))
                 num_species += 1

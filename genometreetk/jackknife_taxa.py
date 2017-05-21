@@ -91,7 +91,7 @@ class JackknifeTaxa(object):
         taxa_to_keep = set(taxa_to_keep).union(outgroup_ids)
 
         fout = open(output_file, 'w')
-        for seq_id, seq in msa.iteritems():
+        for seq_id, seq in msa.items():
             if seq_id in taxa_to_keep:
                 fout.write('>' + seq_id + '\n')
                 fout.write(seq + '\n')
@@ -123,7 +123,7 @@ class JackknifeTaxa(object):
         self.perc_taxa_to_keep = perc_taxa_to_keep
         self.model = model
         self.replicate_dir = os.path.join(output_dir, 'replicates')
-        make_sure_path_exists(self.replicate_dir)
+        make_sure_path_exists(self.replicate_dir)
         # read outgroup taxa
         self.outgroup_ids = set()
         if outgroup_file:
@@ -140,7 +140,7 @@ class JackknifeTaxa(object):
 
         # calculate support
         rep_tree_files = []
-        for rep_index in xrange(num_replicates):
+        for rep_index in range(num_replicates):
             rep_tree_files.append(os.path.join(self.replicate_dir, 'jk_taxa.tree.' + str(rep_index) + '.tre'))
 
         tree_support = TreeSupport()

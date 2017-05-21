@@ -146,7 +146,7 @@ class PhylogeneticDiversity():
                 pg_taxon[leaf.taxon.label] = [pg, outgroup_taxon]
                 
                 # propagate information to genomes represented by this genome_id
-                for genome_id, rep_id in genome_reps.iteritems():
+                for genome_id, rep_id in genome_reps.items():
                     if genome_id in ingroup and rep_id == leaf.taxon.label:
                         pg_taxon[genome_id] = [pg, outgroup_taxon]
 
@@ -227,7 +227,7 @@ class PhylogeneticDiversity():
             
             fout = open(per_taxa_pg_file, 'w')
             fout.write('Taxon\tPG\tPercent PG\tFirst outgroup taxon\n')
-            for taxon, pg_stats in pg_taxon.iteritems():
+            for taxon, pg_stats in pg_taxon.items():
                 pg, outgroup_taxon = pg_stats
                 fout.write('%s\t%f\t%f\t%s\n' % (taxon, pg, pg * 100.0 / total_pd, outgroup_taxon))
             fout.close()
@@ -294,7 +294,7 @@ class PhylogeneticDiversity():
                     taxon_pd += nn.edge.length
 
                 if taxon == 'd__Archaea':
-                    print taxon_count, in_taxon_count, out_taxon_count, in_taxon_pd, out_taxon_pd
+                    print(taxon_count, in_taxon_count, out_taxon_count, in_taxon_pd, out_taxon_pd)
                 pd[taxon] = [taxon_pd, in_taxon_pd, in_taxon_count, in_taxon_derep, out_taxon_pd, out_taxon_count, out_taxon_derep]
                 
         return pd
@@ -343,7 +343,7 @@ class PhylogeneticDiversity():
         self.logger.info('Calculating PD for named clades.')
         pd_clade = self._clade_pd(tree, ingroup_count, outgroup_count)
         
-        print 'ingroup_count, outgroup_count', len(ingroup_count), len(outgroup_count)
+        print('ingroup_count, outgroup_count', len(ingroup_count), len(outgroup_count))
 
         # report results
         fout = open(output_file, 'w')
@@ -353,7 +353,7 @@ class PhylogeneticDiversity():
         fout.write('\tIn Taxa\tIn Taxa (derep)\tIn PD\tIn Percent PD')
         fout.write('\tIn PG\tIn Percent PG\n')
         
-        ordered_taxa = Taxonomy().sort_taxa(pd_clade.keys())
+        ordered_taxa = Taxonomy().sort_taxa(list(pd_clade.keys()))
         for taxon in ordered_taxa:
             taxon_pd, in_taxon_pd, in_taxon_count, in_taxon_derep, out_taxon_pd, out_taxon_count, out_taxon_derep = pd_clade[taxon]
             taxon_count = in_taxon_count + out_taxon_count

@@ -137,14 +137,14 @@ class RNA_Workflow(object):
         if remove_identical:
             self.logger.info('Filtering identical sequences.')
 
-            seq_ids = seqs.keys()
-            for i in xrange(0, len(seq_ids)):
+            seq_ids = list(seqs.keys())
+            for i in range(0, len(seq_ids)):
                 seq_id_I = seq_ids[i]
 
                 if seq_id_I in identical_seqs:
                     continue
 
-                for j in xrange(i + 1, len(seqIds)):
+                for j in range(i + 1, len(seqIds)):
                     seq_id_J = seq_ids[j]
                     if seqs[seq_id_I] == seqs[seq_id_J]:
                       self.logger.info('Seq %s and %s are identical.' % (seq_id_I, seq_id_J))
@@ -155,7 +155,7 @@ class RNA_Workflow(object):
         # trim start and end columns to consensus alignment
         first_char = []
         last_char = []
-        for seq_id, seq in seqs.iteritems():
+        for seq_id, seq in seqs.items():
             if seq_id in identical_seqs:
                 continue
 
@@ -164,7 +164,7 @@ class RNA_Workflow(object):
                     first_char.append(i)
                     break
 
-            for i in xrange(len(seq) - 1, -1, -1):
+            for i in range(len(seq) - 1, -1, -1):
                 if seq[i] != '.' and seq[i] != '-':
                     last_char.append(i)
                     break
@@ -183,12 +183,12 @@ class RNA_Workflow(object):
         fout = open(output_msa, 'w')
         fout_short = open(short_seq_file, 'w')
         num_filtered_seq = 0
-        for seq_id, seq in seqs.iteritems():
+        for seq_id, seq in seqs.items():
             if seq_id in identical_seqs:
                 continue
 
             valid_bp = 0
-            for i in xrange(start, min(len(seq), end + 1)):
+            for i in range(start, min(len(seq), end + 1)):
                 ch = seq[i]
                 if ch != '.' and ch != '-':
                     valid_bp += 1
@@ -481,7 +481,7 @@ class RNA_Workflow(object):
                 top_hits_out = os.path.join(align_dir, 'top_hits.%s.%s.tsv' % (rna_name, domain))
                 fout = open(top_hits_out, 'w')
                 num_hits = 0
-                for top_domain, seq_id, start_seq, end_seq, bitscore in top_hits.values():
+                for top_domain, seq_id, start_seq, end_seq, bitscore in list(top_hits.values()):
                     if top_domain == domain:
                         fout.write('%s\t%d\t%d\%f\n' % (seq_id, start_seq, end_seq, bitscore))
                         num_hits += 1
@@ -535,7 +535,7 @@ class RNA_Workflow(object):
             lsu_seqs[genome_id] = [seq, annotation]
         self.logger.info('Read %d LSU rRNA sequences.' % len(lsu_seqs))
               
-        common_seqs = set(ssu_seqs.keys()).intersection(lsu_seqs.keys())
+        common_seqs = set(ssu_seqs.keys()).intersection(list(lsu_seqs.keys()))
         self.logger.info('Identified %d sequences in common.' % len(common_seqs))
         
         # identify incongruent taxonomic order classifcations between trees

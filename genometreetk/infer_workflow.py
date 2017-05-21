@@ -102,7 +102,7 @@ class InferWorkflow(object):
 
         fout_info = open(hmm_info_out, 'w')
         fout_info.write('Model Accession\tName\tDescription\tLength\n')
-        for model in hmm_models.values():
+        for model in list(hmm_models.values()):
             fout_info.write('%s\t%s\t%s\t%s\n' % (model.acc, model.name, model.desc, model.leng))
         fout_info.close()
 

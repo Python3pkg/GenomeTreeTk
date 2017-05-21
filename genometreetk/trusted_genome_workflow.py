@@ -124,7 +124,7 @@ class TrustedGenomeWorkflow(object):
                                                       max_contigs, min_N50)
         if representative_genomes:
             self.logger.info('Limiting genomes to RefSeq representative.')
-            for genome_id in trusted_genomes_stats.keys():
+            for genome_id in list(trusted_genomes_stats.keys()):
                 if genome_id not in representative_genomes:
                     del trusted_genomes_stats[genome_id]
 
@@ -139,7 +139,7 @@ class TrustedGenomeWorkflow(object):
         fout.write('#\n')
         fout.write('# Genome Id\tCompleteness,Contamination,Contig count,N50\tGTDB Taxonomy\tNCBI Taxonomy\n')
 
-        for assembly_accession, stats in trusted_genomes_stats.iteritems():
+        for assembly_accession, stats in trusted_genomes_stats.items():
             fout.write('%s\t%s\t%s\t%s\n' % (assembly_accession,
                                                  ','.join(map(str, stats)),
                                                  ';'.join(gtdb_taxonomy.get(assembly_accession, ['none'])),

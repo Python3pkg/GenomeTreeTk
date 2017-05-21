@@ -100,7 +100,7 @@ def check_domain_assignment(genome_id, gtdb_taxonomy, ncbi_taxonomy, rep_is_bact
     gtdb_domain = gtdb_taxonomy[genome_id][0]
     ncbi_domain = ncbi_taxonomy[genome_id][0]
     if gtdb_domain != 'd__' and ncbi_domain != 'd__' and gtdb_domain != ncbi_domain:
-        print '[Warning] GTDB and NCBI domain assignments do not agree: %s' % genome_id
+        print('[Warning] GTDB and NCBI domain assignments do not agree: %s' % genome_id)
         return False
     else:
         for domain in [gtdb_domain, ncbi_domain]:
@@ -108,16 +108,16 @@ def check_domain_assignment(genome_id, gtdb_taxonomy, ncbi_taxonomy, rep_is_bact
                 continue
                 
             if rep_is_bacteria and domain != 'd__Bacteria':
-                print '[Warning] Taxonomy and predicted bacterial domain assignment do not agree: %s' % genome_id
-                print '*%s\t%s' % (genome_id, ';'.join(Taxonomy.rank_prefixes))
-                print gtdb_taxonomy[genome_id]
-                print ncbi_taxonomy[genome_id]
+                print('[Warning] Taxonomy and predicted bacterial domain assignment do not agree: %s' % genome_id)
+                print('*%s\t%s' % (genome_id, ';'.join(Taxonomy.rank_prefixes)))
+                print(gtdb_taxonomy[genome_id])
+                print(ncbi_taxonomy[genome_id])
                 return False
             elif not rep_is_bacteria and domain != 'd__Archaea':
-                print '[Warning] Taxonomy and predicted archaeal domain assignment do not agree: %s' % genome_id
-                print '*%s\t%s' % (genome_id, ';'.join(Taxonomy.rank_prefixes))
-                print gtdb_taxonomy[genome_id]
-                print ncbi_taxonomy[genome_id]
+                print('[Warning] Taxonomy and predicted archaeal domain assignment do not agree: %s' % genome_id)
+                print('*%s\t%s' % (genome_id, ';'.join(Taxonomy.rank_prefixes)))
+                print(gtdb_taxonomy[genome_id])
+                print(ncbi_taxonomy[genome_id])
                 return False
                 
     return True
@@ -276,7 +276,7 @@ def species_label(gtdb_taxonomy, ncbi_taxonomy, ncbi_organism_name):
 
     species = {}
     species_index = Taxonomy.rank_index['s__']
-    for genome_id, taxa in gtdb_taxonomy.iteritems():
+    for genome_id, taxa in gtdb_taxonomy.items():
         sp = taxa[species_index]
         if sp != 's__':
             species[genome_id] = sp
@@ -285,7 +285,7 @@ def species_label(gtdb_taxonomy, ncbi_taxonomy, ncbi_organism_name):
                 # it may conflict with GTDB information
                 # in unwanted ways
         
-        for genome_id, taxa in ncbi_taxonomy.iteritems():
+        for genome_id, taxa in ncbi_taxonomy.items():
             if genome_id in species:
                 continue
 
@@ -294,7 +294,7 @@ def species_label(gtdb_taxonomy, ncbi_taxonomy, ncbi_organism_name):
             if sp:
                 species[genome_id] = sp
 
-        for genome_id, sp in ncbi_organism_name.iteritems():
+        for genome_id, sp in ncbi_organism_name.items():
             if genome_id in species:
                 continue
 
@@ -410,7 +410,7 @@ def read_gtdb_taxonomy(metadata_file):
             taxa_str = row[taxonomy_index].strip()
 
             if taxa_str:
-                taxonomy[genome_id] = map(str.strip, taxa_str.split(';'))
+                taxonomy[genome_id] = list(map(str.strip, taxa_str.split(';')))
             else:
                 taxonomy[genome_id] = list(Taxonomy.rank_prefixes)
 
@@ -669,7 +669,7 @@ def create_concatenated_alignment(genome_ids,
         f = mg + '.aln.masked.faa'
         seqs = seq_io.read_fasta(os.path.join(alignment_dir, f))
 
-        for seq_id, seq in seqs.iteritems():
+        for seq_id, seq in seqs.items():
             genome_id = seq_id[0:seq_id.find(DefaultValues.SEQ_CONCAT_CHAR)]
 
             alignments[mg][genome_id] = seq

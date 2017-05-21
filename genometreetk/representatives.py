@@ -137,7 +137,7 @@ class Representatives(object):
         """Ensure a LPSN type strain has been selected for each species."""
         
         lpsn_genomes = 0
-        for sp, genome_ids in lpsn_type_strains.iteritems():
+        for sp, genome_ids in lpsn_type_strains.items():
             if len(genome_ids.intersection(genomes_to_retain)) >= 1:
                 # an LPSN type strain has already been selected for this species
                 continue
@@ -145,7 +145,7 @@ class Representatives(object):
             # select genome with the highest quality
             q = {k:genome_quality[k]+ self.prev_rep_quality_boost*(k in prev_gtdb_reps) 
                     for k in genome_ids}
-            q_sorted = sorted(q.items(), key=operator.itemgetter(1), reverse=True)
+            q_sorted = sorted(list(q.items()), key=operator.itemgetter(1), reverse=True)
             genomes_to_retain.add(q_sorted[0][0])
             lpsn_genomes += 1
 
@@ -213,7 +213,7 @@ class Representatives(object):
         # dereplicate species
         retained_reps = len(genomes_to_retain)
         additional_reps = 0
-        for sp, genome_ids in species.iteritems():
+        for sp, genome_ids in species.items():
             representatives = genome_ids.intersection(representative_genomes)
 
             if len(genome_ids) > max_species:
@@ -236,19 +236,19 @@ class Representatives(object):
                     if complete_type_strains:
                         q = {k:genome_quality[k] + self.prev_rep_quality_boost*(k in prev_gtdb_reps) 
                                 for k in complete_type_strains}
-                        q_sorted = sorted(q.items(), key=operator.itemgetter(1), reverse=True)
+                        q_sorted = sorted(list(q.items()), key=operator.itemgetter(1), reverse=True)
                         selected_genomes.add(q_sorted[0][0])
                     elif type_strains:
                         q = {k:genome_quality[k] + self.prev_rep_quality_boost*(k in prev_gtdb_reps) 
                                 for k in type_strains}
-                        q_sorted = sorted(q.items(), key=operator.itemgetter(1), reverse=True)
+                        q_sorted = sorted(list(q.items()), key=operator.itemgetter(1), reverse=True)
                         selected_genomes.add(q_sorted[0][0])
 
                 # grab as many complete genomes as possible
                 if len(selected_genomes) < max_species and complete:
                     q = {k:genome_quality[k] + self.prev_rep_quality_boost*(k in prev_gtdb_reps) 
                             for k in complete}
-                    q_sorted = sorted(q.items(), key=operator.itemgetter(1), reverse=True)
+                    q_sorted = sorted(list(q.items()), key=operator.itemgetter(1), reverse=True)
 
                     genomes_to_select = min(len(complete), max_species - len(selected_genomes))
                     selected_complete_genomes = [x[0] for x in q_sorted[0:genomes_to_select]] 
@@ -258,7 +258,7 @@ class Representatives(object):
                 if len(selected_genomes) < max_species and genome_ids:
                     genome_ids.difference_update(selected_genomes)
                     genome_ids_quality = {k:genome_quality[k] + self.prev_rep_quality_boost*(k in prev_gtdb_reps) for k in genome_ids}
-                    genome_ids_quality_sorted = sorted(genome_ids_quality.items(), key=operator.itemgetter(1), reverse=True)
+                    genome_ids_quality_sorted = sorted(list(genome_ids_quality.items()), key=operator.itemgetter(1), reverse=True)
                     
                     genomes_to_select = min(len(genome_ids), max_species - len(selected_genomes))
                     additional_genomes = [x[0] for x in genome_ids_quality_sorted[0:genomes_to_select]] 
@@ -360,7 +360,7 @@ class Representatives(object):
         
         species = {}
         species_index = Taxonomy.rank_index['s__']
-        for genome_id, taxa in gtdb_taxonomy.iteritems():
+        for genome_id, taxa in gtdb_taxonomy.items():
             sp = taxa[species_index]
             if sp != 's__':
                 species[genome_id] = sp
@@ -379,7 +379,7 @@ class Representatives(object):
         genome_quality = {}
         filtered_reps = 0
         lack_ncbi_taxonomy = 0
-        for genome_id in genome_stats.keys():
+        for genome_id in list(genome_stats.keys()):
             if genome_id.startswith('U_') and genome_id not in trusted_user_genomes:
                 continue
                 
@@ -478,7 +478,7 @@ class Representatives(object):
 
         ncbi_type_strains = read_gtdb_ncbi_type_strain(metadata_file)
         self.logger.info('Identified %d genomes marked as type strains at NCBI.' % len(ncbi_type_strains))
-        self.logger.info('Identified %d genomes marked as type strains at LPSN.' % sum([len(x) for x in lpsn_type_strains.values()]))
+        self.logger.info('Identified %d genomes marked as type strains at LPSN.' % sum([len(x) for x in list(lpsn_type_strains.values())]))
 
         # dereplicate named species
         genomes_to_retain = self._dereplicate_species(genomes_to_consider,
@@ -551,14 +551,14 @@ class Representatives(object):
         # giving a slight boost to genomes that were previously a representative
         
         self.logger.info('Boosting quality of previous representatives by %.1f%%.' % self.prev_rep_quality_boost)
-        for genome_id, quality in  genome_quality.iteritems():
+        for genome_id, quality in  genome_quality.items():
             if genome_id in prev_gtdb_reps:
                 genome_quality[genome_id] = quality + self.prev_rep_quality_boost
 
         sorted_refseq_rep_genomes = []
         sorted_genbank_rep_genomes = []
         sorted_trusted_user_rep_genomes = []
-        sorted_by_quality = sorted(genome_quality.items(), 
+        sorted_by_quality = sorted(list(genome_quality.items()), 
                                     key=operator.itemgetter(1), 
                                     reverse=True)
         for genome_id, _quality in sorted_by_quality:
@@ -762,7 +762,7 @@ class Representatives(object):
         # of insufficient quality to be a representative
         genome_quality = {}
         potential_reps = set()
-        for genome_id, stats in genome_stats.iteritems():
+        for genome_id, stats in genome_stats.items():
             if genome_id in init_rep_genomes:
                 continue
                 

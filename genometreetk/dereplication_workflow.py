@@ -109,7 +109,7 @@ class DereplicationWorkflow(object):
 
         # dereplicate species
         additional_reps = 0
-        for sp, genome_ids in species.iteritems():
+        for sp, genome_ids in species.items():
             representatives = genome_ids.intersection(representative_genomes)
 
             if len(genome_ids) > max_species:
@@ -134,13 +134,13 @@ class DereplicationWorkflow(object):
                 # a slight increase to those previous marked as a GTDB 
                 # representative
                 complete_quality = {k:genome_quality[k] + rep_quality_boost*(k in prev_gtdb_reps) for k in complete}
-                complete_quality_sorted = sorted(complete_quality.items(), key=operator.itemgetter(1), reverse=True)
+                complete_quality_sorted = sorted(list(complete_quality.items()), key=operator.itemgetter(1), reverse=True)
 
                 type_strains_quality = {k:genome_quality[k] + rep_quality_boost*(k in prev_gtdb_reps) for k in type_strains}
-                type_strains_quality_sorted = sorted(type_strains_quality.items(), key=operator.itemgetter(1), reverse=True)
+                type_strains_quality_sorted = sorted(list(type_strains_quality.items()), key=operator.itemgetter(1), reverse=True)
 
                 complete_type_strains_quality = {k:genome_quality[k] + rep_quality_boost*(k in prev_gtdb_reps) for k in complete_type_strains}
-                complete_type_strains_quality_sorted = sorted(complete_type_strains_quality.items(), key=operator.itemgetter(1), reverse=True)
+                complete_type_strains_quality_sorted = sorted(list(complete_type_strains_quality.items()), key=operator.itemgetter(1), reverse=True)
 
                 # try to select a complete type strain, otherwise just take
                 # any type strain if one exists
@@ -162,7 +162,7 @@ class DereplicationWorkflow(object):
                 if len(selected_genomes) < max_species and genome_ids:
                     genome_ids.difference_update(selected_genomes)
                     genome_ids_quality = {k:genome_quality[k] + rep_quality_boost*(k in prev_gtdb_reps) for k in genome_ids}
-                    genome_ids_quality_sorted = sorted(genome_ids_quality.items(), key=operator.itemgetter(1), reverse=True)
+                    genome_ids_quality_sorted = sorted(list(genome_ids_quality.items()), key=operator.itemgetter(1), reverse=True)
                     
                     genomes_to_select = min(len(genome_ids), max_species - len(selected_genomes))
                     additional_genomes = [x[0] for x in genome_ids_quality_sorted[0:genomes_to_select]] 
@@ -180,14 +180,14 @@ class DereplicationWorkflow(object):
       
         # make sure to select at least one LPSN type strain for each species
         lpsn_genomes = 0
-        for sp, genome_ids in lpsn_type_strains.iteritems():
+        for sp, genome_ids in lpsn_type_strains.items():
             if len(genome_ids.intersection(genomes_to_retain)) >= 1:
                 # an LPSN type strain has already been selected for this species
                 continue
                 
             # select genome with the highest quality
             genome_ids_quality = {k:genome_quality[k]+ rep_quality_boost*(k in prev_gtdb_reps) for k in genome_ids}
-            genome_ids_quality_sorted = sorted(genome_ids_quality.items(), key=operator.itemgetter(1), reverse=True)
+            genome_ids_quality_sorted = sorted(list(genome_ids_quality.items()), key=operator.itemgetter(1), reverse=True)
             genomes_to_retain.add(genome_ids_quality_sorted[0][0])
             lpsn_genomes += 1
 
@@ -272,7 +272,7 @@ class DereplicationWorkflow(object):
         self.logger.info('Identified %d previous GTDB representatives.' % len(prev_gtdb_reps))
         
         # get genome quality
-        genomes_to_consider = accession_to_taxid.keys()
+        genomes_to_consider = list(accession_to_taxid.keys())
         genome_stats = read_gtdb_metadata(metadata_file, ['checkm_completeness',
                                                             'checkm_contamination',
                                                             'contig_count',
@@ -304,7 +304,7 @@ class DereplicationWorkflow(object):
         filtered_reps = 0
         lack_ncbi_taxonomy = 0
         contig_filter_count = 0
-        for genome_id in accession_to_taxid.keys():
+        for genome_id in list(accession_to_taxid.keys()):
             stats = genome_stats[genome_id]
             
             if not stats.ncbi_taxonomy:
@@ -381,7 +381,7 @@ class DereplicationWorkflow(object):
                 
         fout.close()
         
-        print 'contig_filter_count', contig_filter_count
+        print('contig_filter_count', contig_filter_count)
 
         genomes_to_consider = new_genomes_to_consider
         self.logger.info('Skipped %d genomes without an assigned NCBI taxonomy.' % lack_ncbi_taxonomy)
@@ -391,7 +391,7 @@ class DereplicationWorkflow(object):
 
         ncbi_type_strains = read_gtdb_ncbi_type_strain(metadata_file)
         self.logger.info('Identified %d genomes marked as type strains at NCBI.' % len(ncbi_type_strains))
-        self.logger.info('Identified %d genomes marked as type strains at LPSN.' % sum([len(x) for x in lpsn_type_strains.values()]))
+        self.logger.info('Identified %d genomes marked as type strains at LPSN.' % sum([len(x) for x in list(lpsn_type_strains.values())]))
 
         genomes_to_retain = self._dereplicate(genomes_to_consider,
                                                 max_species,

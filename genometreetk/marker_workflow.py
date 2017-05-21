@@ -86,7 +86,7 @@ class MarkerWorkflow(object):
             hmm_models = hmm_model_parse.models()
             fout = open(hmm_info_out, 'w')
             fout.write('Model Accession\tName\tDescription\tLength\n')
-            for model in hmm_models.values():
+            for model in list(hmm_models.values()):
                 fout.write('%s\t%s\t%s\t%s\n' % (model.acc, model.name, model.desc, model.leng))
             fout.close()
 
@@ -186,7 +186,7 @@ class MarkerWorkflow(object):
 
         hmm_model_parse = HmmModelParser(hmm_model_out)
         hmm_models = hmm_model_parse.models()
-        for model_acc, model_info in hmm_models.iteritems():
+        for model_acc, model_info in hmm_models.items():
             fout.write('%s\t%s\t%s\t%s\t%.1f\t%.1f\t%.1f\t%.1f\t%.2f\t%.2f\t%.3f\n' % (model_acc,
                                                                                model_info.name,
                                                                                model_info.desc,
